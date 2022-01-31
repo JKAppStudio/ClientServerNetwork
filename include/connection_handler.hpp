@@ -1,7 +1,7 @@
 
 /**
  * @file connection_handler.hpp
- * @brief Connection Handler class.
+ * @brief Connection Handler interface.
  * 
  * @author Evgeny Krivoshein
  */
@@ -92,11 +92,26 @@ private:
      */
     void read_message_done(boost::system::error_code const& ec, size_t bytes_read);
 
+    /**
+     * @brief Enqueues message to send queue.
+     * 
+     * @param msg message
+     */
     void enqueue_message(const message_type& msg);
 
+    /**
+     * @brief Send message asynchronously
+     * 
+     */
     void start_send(void);
 
+    /**
+     * @brief Dequeues sent message
+     * 
+     * @param ec error code
+     */
     void send_done(const boost::system::error_code& ec);
+
 private:
     // ASIO context reference.
     boost::asio::io_context& _context;

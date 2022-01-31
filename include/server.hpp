@@ -1,7 +1,7 @@
 
 /** 
  * @file server.hpp
- * @brief server class.
+ * @brief Server interface.
  * 
  * @author Evgeny Krivoshein
  */

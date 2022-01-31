@@ -30,8 +30,10 @@ std::string connection_handler::remote_address(void) const{
     return _socket.remote_endpoint().address().to_string() + ":" + std::to_string(_socket.remote_endpoint().port());
 }
 
+// Read message 
 void connection_handler::read_message(void)
 {
+    // Read asynchronously till '\0' charecter. Then call read_message_done.
     boost::asio::async_read_until(_socket,
                             _receive_packet,
                             '\0',
@@ -41,24 +43,36 @@ void connection_handler::read_message(void)
                             } );
 }
 
+// Read message done
 void connection_handler::read_message_done(boost::system::error_code const& ec, size_t bytes_read)
 {
+    // Resign if error acquired
     if (ec) return;
+
+    // Creat weak_ptr for this
     auto self = this->shared_from_this();
     std::weak_ptr<connection_handler> weak_handler = self;
+
+    // Get message from streambuffer
     std::ostringstream stream;
     stream << &_receive_packet;
     message_type packet = stream.str();
-    // stream >> packet;
+
+    // Construct owned message from weak_ptr and incoming message
     owned_message msg(weak_handler, packet);
-    _context.post([self, msg](){
-        self->_message_handler->dispatch_message(msg);
+
+    // Call message dispatcher (async)
+    boost::asio::post(_context,
+        [self, msg](){
+            self->_message_handler->dispatch_message(msg);
         });
     read_message();
 }
 
+// Send
 void connection_handler::send(const message_type& msg) 
 {
+    // Post enqueue message to write strand
     boost::asio::post(boost::asio::bind_executor(_write_strand,
         [self=shared_from_this(), msg]()
         {
@@ -67,16 +81,23 @@ void connection_handler::send(const message_type& msg)
     );    
 }
 
+// Enqueue message
 void connection_handler::enqueue_message(const message_type& msg) 
 {
-    bool ready_to_write = _send_queue.empty();
+    // Check if already writing
+    bool write_in_progress = _send_queue.empty();
+    // Push message in send queue
     _send_queue.push_back(msg);
-    if(ready_to_write) start_send();    
+    // Start send if not already writing
+    if(!write_in_progress) start_send();    
 }
 
+// Start send
 void connection_handler::start_send(void) 
 {
+    // Add '\0' to message
     _send_queue.front() += '\0';
+    // Write message asynchronously. Call send_done after.
     boost::asio::async_write(_socket
         , boost::asio::buffer(_send_queue.front())
         , boost::asio::bind_executor(_write_strand,
@@ -87,10 +108,14 @@ void connection_handler::start_send(void)
     );
 }
 
+//Send done
 void connection_handler::send_done(const boost::system::error_code& ec) 
 {
+    // Resign if error acquired
     if(ec) return; 
+    // Pop sent message
     _send_queue.pop_front();
+    // Start send if there is message to send
     if(!_send_queue.empty()) start_send();
 }
 

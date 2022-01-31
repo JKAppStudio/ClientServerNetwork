@@ -32,7 +32,7 @@ int main(int argc, char* argv[]){
     Client client(std::make_shared<message_printer>());
     client.connect("localhost", "8888");
     
-    sleep(2);
+    sleep(1);
     client.disconnect();
     server.stop_server();
     

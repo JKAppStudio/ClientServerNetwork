@@ -1,7 +1,7 @@
 /**
  * @file client.hpp
  * @author Evgeny Krivoshein
- * @brief cs_net client interface
+ * @brief Client interface
  */
 
 #ifndef __CS_NET_CLIENT_HPP__
@@ -27,7 +27,7 @@ public:
      * @param service commenication protocol
      */
     Client(std::shared_ptr<message_handler> service);
-    
+
     /**
      * @brief Destroy the Client object
      */

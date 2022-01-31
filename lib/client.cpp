@@ -4,7 +4,7 @@
 /**
  * @file client.cpp
  * @author Evgeny Krivoshein
- * @brief cs_net client implementation
+ * @brief Client implementation
  */
 
 #include <client.hpp>
