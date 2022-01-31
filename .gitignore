@@ -1,3 +1,7 @@
+#Ignore list
+#Build junk
 build/
+#vscode junk
 .vscode/
+#Doxigen junk
 html/
