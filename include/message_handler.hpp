@@ -48,8 +48,8 @@ typedef std::deque<owned_message> owned_message_queue;
 class message_handler
 {
 public:
-    virtual void dispatch_message(const owned_message& owned_msg) = 0;
-
+    virtual void dispatch_message(const owned_message& owned_msg) {};
+    virtual void on_connection(std::weak_ptr<connection_handler> handler) {};
 };
 
 } // namespace cs_net

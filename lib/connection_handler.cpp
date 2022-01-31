@@ -46,14 +46,52 @@ void connection_handler::read_message_done(boost::system::error_code const& ec, 
     if (ec) return;
     auto self = this->shared_from_this();
     std::weak_ptr<connection_handler> weak_handler = self;
-    std::istream stream(&_receive_packet);
-    message_type packet;
-    stream >> packet;
+    std::ostringstream stream;
+    stream << &_receive_packet;
+    message_type packet = stream.str();
+    // stream >> packet;
     owned_message msg(weak_handler, packet);
     _context.post([self, msg](){
         self->_message_handler->dispatch_message(msg);
         });
     read_message();
+}
+
+void connection_handler::send(const message_type& msg) 
+{
+    boost::asio::post(boost::asio::bind_executor(_write_strand,
+        [self=shared_from_this(), msg]()
+        {
+            self->enqueue_message(msg);
+        })
+    );    
+}
+
+void connection_handler::enqueue_message(const message_type& msg) 
+{
+    bool ready_to_write = _send_queue.empty();
+    _send_queue.push_back(msg);
+    if(ready_to_write) start_send();    
+}
+
+void connection_handler::start_send(void) 
+{
+    _send_queue.front() += '\0';
+    boost::asio::async_write(_socket
+        , boost::asio::buffer(_send_queue.front())
+        , boost::asio::bind_executor(_write_strand,
+            [self = shared_from_this()](const boost::system::error_code& ec, size_t)
+            {
+                self->send_done(ec);
+            })
+    );
+}
+
+void connection_handler::send_done(const boost::system::error_code& ec) 
+{
+    if(ec) return; 
+    _send_queue.pop_front();
+    if(!_send_queue.empty()) start_send();
 }
 
 } //namespace cs_net

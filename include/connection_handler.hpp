@@ -62,10 +62,17 @@ public:
 
     /**
      * @brief Return remote client IP address.
-     * @details Remote address in IP.PORT format.
+     * @details Remote address in "IP":"PORT" format.
      * @return std::string remote ip address
      */
     std::string remote_address(void) const;
+
+    /**
+     * @brief Send message 
+     * 
+     * @param msg message to send.
+     */
+    void send(const message_type& msg);
 
 private:
 
@@ -85,15 +92,22 @@ private:
      */
     void read_message_done(boost::system::error_code const& ec, size_t bytes_read);
 
+    void enqueue_message(const message_type& msg);
+
+    void start_send(void);
+
+    void send_done(const boost::system::error_code& ec);
+private:
     // ASIO context reference.
     boost::asio::io_context& _context;
     // TCP socket. 
     boost::asio::ip::tcp::socket _socket;
+    
     // Read message placeholder
     boost::asio::streambuf _receive_packet;
+
     // Synchronization strand. Prevents simultaneous writes to socket.
     boost::asio::io_context::strand _write_strand;
-
     // Outgoing message queue.
     message_queue _send_queue;
 

@@ -68,7 +68,7 @@ void Server::handle_new_connection(shared_handler_t handler, boost::system::erro
     // disconnect otherwise.
     if (accept(handler)){
         handler->start();
-        std::cout << "New connection from: " << handler->remote_address() << std::endl;
+        _message_handler->on_connection(handler);
     } else {
         handler->disconnect();
     }

@@ -10,12 +10,16 @@ using namespace cs_net;
 class message_printer : public message_handler
 {
 public:
-    void dispatch_message(const owned_message& owned_msg){
-        std::cout << owned_msg.message;
+    void dispatch_message(const owned_message& owned_msg)
+    {
+        std::cout << owned_msg.message << std::endl;
     }
 
-    void prepare_response(void){
-
+    void on_connection(std::weak_ptr<connection_handler> weak_handler)
+    {
+        if (std::shared_ptr<connection_handler> handler = weak_handler.lock()){
+            handler->send("Hello from SERVER!");
+        }
     }
 };
 
@@ -28,7 +32,7 @@ int main(int argc, char* argv[]){
     Client client(std::make_shared<message_printer>());
     client.connect("localhost", "8888");
     
-    sleep(3);
+    sleep(2);
     client.disconnect();
     server.stop_server();
     
