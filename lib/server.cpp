@@ -64,11 +64,10 @@ bool Server::accept(shared_handler_t handler)
 void Server::handle_new_connection(shared_handler_t handler, boost::system::error_code const& error)
 {
     if(error) return;
-    // if accepted, start handler and add it to connection pool
+    // if accepted, start handler
     // disconnect otherwise.
     if (accept(handler)){
         handler->start();
-        _message_handler->on_connection(handler);
     } else {
         handler->disconnect();
     }

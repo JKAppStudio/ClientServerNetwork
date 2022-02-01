@@ -33,15 +33,35 @@ public:
      */
     ~Client(void);
 
+    /**
+     * @brief Establish connection with remote host.
+     * 
+     * @param host remote host ip address
+     * @param port port to conect to.
+     */
     void connect(std::string host, std::string port);
+
+    /**
+     * @brief Disconnect from remote host by closing socket.
+     * 
+     */
     void disconnect(void);
+
+    /**
+     * @brief Send message
+     * 
+     * @param msg message to send
+     */
     void send(const message_type& msg);
 
 private:
+    /// ASIO context
     boost::asio::io_context _context;
+    /// Soket
     boost::asio::ip::tcp::socket _socket;
-
-    std::shared_ptr<connection_handler> _handler;
+    /// Connection handler 
+    shared_handler_t _handler;
+    /// Thread in wich _context will be running
     std::thread _thread;
 };
 

@@ -18,10 +18,13 @@ connection_handler::connection_handler(boost::asio::io_context& context, std::sh
 
 // Start
 void connection_handler::start(void){
+    _message_handler->on_connect(shared_from_this());
     read_message();
+
 }
 
 void connection_handler::disconnect(void){
+    _message_handler->on_disconnect(shared_from_this());
     _socket.close();
 }
 
@@ -64,7 +67,7 @@ void connection_handler::read_message_done(boost::system::error_code const& ec, 
     // Call message dispatcher (async)
     boost::asio::post(_context,
         [self, msg](){
-            self->_message_handler->dispatch_message(msg);
+            self->_message_handler->on_message_receive(msg);
         });
     read_message();
 }
@@ -85,7 +88,7 @@ void connection_handler::send(const message_type& msg)
 void connection_handler::enqueue_message(const message_type& msg) 
 {
     // Check if already writing
-    bool write_in_progress = _send_queue.empty();
+    bool write_in_progress = !_send_queue.empty();
     // Push message in send queue
     _send_queue.push_back(msg);
     // Start send if not already writing

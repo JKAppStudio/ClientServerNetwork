@@ -27,10 +27,6 @@ namespace cs_net{
  */
 class Server
 {
-    /// Shared pointer to connection handler
-    typedef std::shared_ptr<connection_handler> shared_handler_t;
-    /// Weak pointer to connection handler
-    typedef std::weak_ptr<connection_handler> weak_handler_t;
 
 public:
 
