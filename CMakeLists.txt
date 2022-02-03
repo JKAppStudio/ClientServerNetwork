@@ -1,14 +1,17 @@
 #############################
 # athor: Evgeny Krivoshein
 #
-# Server Client Network
+# Client Server Network
 # BOOST:ASIO based project
-
-#
 # Project setup
 
 cmake_minimum_required(VERSION 3.10)
 project(csNet CXX)
+
+########################################################################
+# Add required cmake modules paths
+########################################################################
+list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_SOURCE_DIR})
 
 ########################################################################
 # Set C++ standatd
@@ -16,24 +19,8 @@ project(csNet CXX)
 set(CMAKE_CXX_STANDARD 17)
 
 ########################################################################
-# Find required modules
+# Include cmake modules
 ########################################################################
-find_package(Boost ${BOOST_MIN_VERSION} REQUIRED)
-if(Boost_FOUND)
-    include_directories(${Boost_INCLUDE_DIRS})
-endif()
+include(csNet)
 
-########################################################################
-# Local Include Dir
-########################################################################
-include_directories(${CMAKE_BINARY_DIR}/include)
-include_directories(${CMAKE_SOURCE_DIR}/include)
-
-file(GLOB SOURCES
-    ${CMAKE_SOURCE_DIR}/include/*.hpp
-    ${CMAKE_SOURCE_DIR}/lib/*.cpp
-)
-
-#add_subdirectory(include)
-
-add_executable(csNetTest csNetTest.cpp ${SOURCES})
+add_executable(csNet_example csNet_example.cpp ${CSNET_SRCS})
