@@ -18,8 +18,8 @@ set(CSNET_SRCS)
 ########################################################################
 # Add subdirectories
 ########################################################################
-add_subdirectory(include)
-add_subdirectory(lib)
+add_subdirectory(${CSNET_SOURCE_DIR}/include)
+add_subdirectory(${CSNET_SOURCE_DIR}/lib)
 
 ########################################################################
 # Add include paths

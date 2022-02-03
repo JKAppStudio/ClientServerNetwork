@@ -12,6 +12,7 @@ project(csNet CXX)
 # Add required cmake modules paths
 ########################################################################
 list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_SOURCE_DIR})
+set(CSNET_SOURCE_DIR ${CMAKE_SOURCE_DIR})
 
 ########################################################################
 # Set C++ standatd
