@@ -5,23 +5,21 @@
 # BOOST:ASIO based project
 # Project setup
 
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.13)
 project(csNet CXX)
 
-########################################################################
-# Add required cmake modules paths
-########################################################################
-list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_SOURCE_DIR})
-set(CSNET_SOURCE_DIR ${CMAKE_SOURCE_DIR})
-
-########################################################################
+############################################
 # Set C++ standatd
-########################################################################
-set(CMAKE_CXX_STANDARD 17)
+############################################
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 ########################################################################
-# Include cmake modules
+# csNet lib directory
 ########################################################################
-include(csNet)
+add_subdirectory(src)
 
-add_executable(csNet_example csNet_example.cpp ${CSNET_SRCS})
+########################################################################
+# Add examples
+########################################################################
+add_subdirectory(examples)

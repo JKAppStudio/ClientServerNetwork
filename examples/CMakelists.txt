@@ -1,0 +1,30 @@
+###########################################
+# Athor: Evgeny Krivoshein
+# Client Server Network lib
+#
+# Build csNet examples
+# adds example executables
+# #########################################
+
+cmake_minimum_required(VERSION 3.13)
+
+project(csNet_examples 
+        VERSION 1.0.0.0 
+        LANGUAGES CXX)
+
+############################################
+# Set C++ standatd
+############################################
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+############################################
+# Add Hello cs example
+############################################
+add_executable(csNet_Hello_cs_example csNet_Hello_cs_example.cpp)
+
+target_include_directories(csNet_Hello_cs_example
+        PRIVATE $<TARGET_PROPERTY:csNet,INTERFACE_INCLUDE_DIRECTORIES>)
+
+target_link_libraries(csNet_Hello_cs_example
+        PRIVATE csNet)
